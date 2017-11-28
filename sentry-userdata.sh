@@ -11,10 +11,10 @@ git clone https://github.com/getsentry/onpremise.git
 cd onpremise/
 mkdir -p data/{sentry,postgres}
 
-/usr/local/bin/docker-compose run --rm web config generate-secret-key > SECRET_KEY
+/usr/local/bin/docker-compose run --rm web config generate-secret-key | tail -1 > SECRET_KEY
 
 skey=$(<SECRET_KEY)
-sed -i "s/# SENTRY_SECRET_KEY: ''/SENTRY_SECRET_KEY: '"$skey"'/g" docker-compose.yml
+sed -i "s/# SENTRY_SECRET_KEY: ''/SENTRY_SECRET_KEY: '${skey//&/\\&}'/" docker-compose.yml
 rm SECRET_KEY
 
 /usr/local/bin/docker-compose run --rm web upgrade --noinput
